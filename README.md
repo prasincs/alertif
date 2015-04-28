@@ -41,4 +41,7 @@ This means
 * `-t,--disk-threshold` If there's any disk that's using more than 80 percent disk usage, send PagerDuty Alert
 * `-i,--disk-ignore` Ignores "/dev" and "/tmp" mountpoints
 
+## TODO
 
+* Adding service monitoring
+* CPU check
