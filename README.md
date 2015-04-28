@@ -2,6 +2,9 @@
 
 This is intended to be run as a cron job or something as such for sanity checks on your server. 
 
+![Travis CI Build Status](https://travis-ci.org/prasincs/alertif.svg)
+
+
 ## Supports
 
 - disk usage check
