@@ -3,4 +3,8 @@ language: go
 go:
   - 1.4
 
-install: make all
+install:
+  - export PATH=$PATH:$HOME/gopath/bin
+  - go get github.com/tools/godep
+  - godep restore 
+  - make all
