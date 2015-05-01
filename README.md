@@ -35,16 +35,17 @@ make all
 
 You can run the command using 
 
-`./alertif -s <pagerduty service key> --disk -t 80 -i "/dev,/tmp"`
+`./alertif -p <pagerduty service key> --disk -t 80 -i "/dev,/tmp" -s example,tcp,8888,dead`
 
 This means 
 
-* Run with a pagerduty service key that you've obtained from the site.
+* `-p` Run with a pagerduty service key that you've obtained from the site.
 * `--disk` enable checking disk usage
 * `-t,--disk-threshold` If there's any disk that's using more than 80 percent disk usage, send PagerDuty Alert
 * `-i,--disk-ignore` Ignores "/dev" and "/tmp" mountpoints
+* `-s,--service` If the service is dead, sends alert. Note the syntax, it goes as follows: Name,Type,Port,Action
 
 ## TODO
 
-* Adding service monitoring
+* [DONE] Adding service monitoring
 * CPU check
