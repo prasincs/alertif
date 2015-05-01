@@ -8,6 +8,7 @@ This is intended to be run as a cron job or something as such for sanity checks 
 ## Supports
 
 - disk usage check
+- tcp connection check
 
 ## Setup
 
