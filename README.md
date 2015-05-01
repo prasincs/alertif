@@ -2,7 +2,7 @@
 
 This is intended to be run as a cron job or something as such for sanity checks on your server. 
 
-![Travis CI Build Status](https://travis-ci.org/prasincs/alertif.svg)
+[![Build Status](https://travis-ci.org/prasincs/alertif.svg?branch=master)](https://travis-ci.org/prasincs/alertif)
 
 
 ## Supports
