@@ -9,6 +9,7 @@ This is intended to be run as a cron job or something as such for sanity checks 
 
 - disk usage check
 - tcp connection check
+- http connection check
 
 ## Setup
 
@@ -45,8 +46,17 @@ This means
 * `-t,--disk-threshold` If there's any disk that's using more than 80 percent disk usage, send PagerDuty Alert
 * `-i,--disk-ignore` Ignores "/dev" and "/tmp" mountpoints
 * `-s,--service` If the service is dead, sends alert. Note the syntax, it goes as follows: Name,Type,Port,Action
+* `-h, --hostname` The Hostname you want to use for service checks.
+
+### Service Check format
+
+A Service Command is a comma separated list. It is broken down into the following components:
+
+"Name,Type,Port,Action"
+
+The resulting alert would be sent under the name you've given the service. For `http` service type, the Action is the URL you want to GET.
 
 ## TODO
 
 * [DONE] Adding service monitoring
-* CPU check
+* Add end to end tests
