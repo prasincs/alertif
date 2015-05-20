@@ -49,7 +49,7 @@ func parseServiceCmd(cmd string) (ServiceCommand, error) {
 func tcpCheckHandler(serviceCmd ServiceCommand, hostName string) (string, error) {
 	switch serviceCmd.Action {
 	case "dead":
-		_, err := net.Dial("tcp", fmt.Sprintf("%s:%s",hostName, serviceCmd.Port))
+		_, err := net.Dial("tcp", fmt.Sprintf("%s:%s", hostName, serviceCmd.Port))
 		if err != nil {
 			return "Dead", err
 		}
@@ -63,7 +63,7 @@ func httpCheckHandler(serviceCmd ServiceCommand, hostName string) (string, error
 	_, err := http.Get(fmt.Sprintf("http://%s:%s%s", hostName, serviceCmd.Port, serviceCmd.Action))
 	//defer resp.Body.Close()
 	if err != nil {
-		return "http Check failed", err;
+		return "http Check failed", err
 	}
 
 	return "http Check Succeeded", nil
@@ -72,9 +72,9 @@ func httpCheckHandler(serviceCmd ServiceCommand, hostName string) (string, error
 func executeServiceCmd(serviceCmd ServiceCommand, hostName string) (string, error) {
 	switch serviceCmd.Type {
 	case "tcp":
-		return tcpCheckHandler(serviceCmd,hostName)
+		return tcpCheckHandler(serviceCmd, hostName)
 	case "http":
-		return httpCheckHandler(serviceCmd,hostName)
+		return httpCheckHandler(serviceCmd, hostName)
 	default:
 		return "", errors.New(fmt.Sprintf("Unknown service type supplied: %s", serviceCmd.Type))
 	}
@@ -123,7 +123,7 @@ func main() {
 			hostName2, err2 := os.Hostname()
 			if err2 != nil {
 				fmt.Println("Hostname couldn't be obtained", err2)
-			}else {
+			} else {
 				hostName = hostName2
 			}
 		} else {
@@ -146,12 +146,27 @@ func main() {
 		}
 		ignoredMountPoints := strings.Split(c.String("disk-ignore"), ",")
 		serviceCmdStr := c.String("service")
-		serviceCommand, err := parseServiceCmd(serviceCmdStr)
-		if err != nil {
-			fmt.Printf("Failed to parse service command: %s, err: %v\n", serviceCmdStr, err)
-			os.Exit(65)
+		if serviceCmdStr != "" {
+			serviceCommand, err := parseServiceCmd(serviceCmdStr)
+			if err != nil {
+				fmt.Printf("Failed to parse service command: %s, err: %v\n", serviceCmdStr, err)
+				os.Exit(65)
+			}
+			fmt.Printf("ServiceCommand: %v\n", serviceCommand)
+			_, err = executeServiceCmd(serviceCommand, hostName)
+			if err != nil {
+				title := fmt.Sprintf("[%s][%s] %s service on port %s is down: %v", hostName,
+					serviceCommand.Name, serviceCommand.Type, serviceCommand.Port, err)
+				incidentKey, err := pagerDutyService.Trigger(title)
+				if err != nil {
+					fmt.Println("Ran into an error pushing to PagerDuty.")
+				} else {
+					fmt.Println("Reported to PagerDuty with incidentKey: ", incidentKey)
+
+				}
+			}
 		}
-		fmt.Printf("ServiceCommand: %v\n", serviceCommand)
+
 		fmt.Println("Hostname:", hostName)
 		fmt.Println("PagerDuty ServiceKey: ", serviceKey)
 		fmt.Println("Check Disk? : ", checkDisk)
@@ -191,18 +206,6 @@ func main() {
 			}
 		}
 
-		_, err = executeServiceCmd(serviceCommand,hostName)
-		if err != nil {
-			title := fmt.Sprintf("[%s][%s] %s service on port %s is down: %v", hostName,
-				serviceCommand.Name, serviceCommand.Type, serviceCommand.Port, err)
-			incidentKey, err := pagerDutyService.Trigger(title)
-			if err != nil {
-				fmt.Println("Ran into an error pushing to PagerDuty.")
-			} else {
-				fmt.Println("Reported to PagerDuty with incidentKey: ", incidentKey)
-
-			}
-		}
 	}
 
 	app.Run(os.Args)
